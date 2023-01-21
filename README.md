@@ -6,7 +6,7 @@ The board games sorter is a tool used to organize your board games into shelves 
 
 Given a collection of board games, you will build a piece of code that sorts them using different criterias.
 
-> **You can never place a game that does not fit vertically or horizontally in the shelves**.
+> **You can never place a game that does not fit vertically or horizontally in the shelves**. For now, depth of the shelves will not be taken into account.
 
 ### Level 1
 
