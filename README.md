@@ -33,9 +33,13 @@ Consider you can **rotate** the games so their front cover is oriented to one of
 - All of the games must follow the same rules of placement and orientation.
 - There will be no games next to (if placed horizontally) or behind other games (if placed vertically).
 
+![Level 3 Layout](assets/lvl3.png)
+
 ### Level 4
 
 Given a constant placement orientation, **consider you can rotate or not each game** so you can made the most of the space available.
+
+![Level 4 Layout](assets/lvl4.png)
 
 ### Level 5
 
@@ -46,3 +50,5 @@ Given a constant rotation criteria, **consider you can change the placement orie
 ### Level 6
 
 Consider you can **freely change placement and orientation for each game** so you can made the most of the space available.
+
+![Level 6 Layout](assets/lvl6.png)
