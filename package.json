@@ -21,5 +21,8 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:mutants": "stryker run"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^7.6.0"
   }
 }

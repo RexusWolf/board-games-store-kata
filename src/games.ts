@@ -108,9 +108,9 @@ export const games: Game[] = [
   {
     name: 'Regicide',
     genre: 'Strategy',
-    width: 300,
-    height: 300,
-    depth: 300,
+    width: 70,
+    height: 100,
+    depth: 20,
     publisher: 'Devir',
   },
   {
