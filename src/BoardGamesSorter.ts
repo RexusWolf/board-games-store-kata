@@ -11,13 +11,13 @@ export class BoardGamesSorter {
     numberOfShelves: number;
     shelf: Shelf;
     games: Array<Game>;
-    gamesOrientation: 'VERTICAL' | 'HORIZONTAL';
+    gamesPlacement: 'VERTICAL' | 'HORIZONTAL';
   }) => {
-    const { numberOfShelves, shelf, games, gamesOrientation } = params;
+    const { numberOfShelves, shelf, games, gamesPlacement } = params;
 
     const shelves: Array<Shelf> = this.initializeShelves(numberOfShelves, shelf);
 
-    games.forEach((game) => this.addGameToShelves(shelf, game, shelves, gamesOrientation));
+    games.forEach((game) => this.addGameToShelves(shelf, game, shelves, gamesPlacement));
 
     return shelves;
   };
@@ -26,10 +26,10 @@ export class BoardGamesSorter {
     return new Array(numberOfShelves).fill(0).map(() => Shelf.emptyWithDimensions(shelf.width, shelf.height));
   }
 
-  private addGameToShelves(shelf: Shelf, game: Game, shelves: Shelf[], gamesOrientation: string) {
+  private addGameToShelves(shelf: Shelf, game: Game, shelves: Shelf[], gamesPlacement: string) {
     this.checkGameFitsInShelves(shelf, game);
 
-    const shelfFreeIndex = this.getFreeShelf(shelves, gamesOrientation, game);
+    const shelfFreeIndex = this.getFreeShelf(shelves, gamesPlacement, game);
 
     if (shelfFreeIndex === -1) {
       throw new NotEnoughSpaceInShelves();
@@ -51,13 +51,13 @@ export class BoardGamesSorter {
     }
   }
 
-  private getFreeShelf(shelves: Shelf[], gamesOrientation: string, game: Game) {
+  private getFreeShelf(shelves: Shelf[], gamesPlacement: string, game: Game) {
     return shelves.findIndex((shelf) => {
-      if (gamesOrientation === 'VERTICAL') {
+      if (gamesPlacement === 'VERTICAL') {
         return shelf.availableSpaceHorizontally() >= game.depth;
       }
 
-      if (gamesOrientation === 'HORIZONTAL') {
+      if (gamesPlacement === 'HORIZONTAL') {
         return shelf.availableSpaceVertically() >= game.depth;
       }
     });
