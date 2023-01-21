@@ -31,4 +31,12 @@ Consider you can **rotate** the games so their front cover is oriented to one of
 
 ### Level 4
 
+Given a constant placement orientation, **consider you can rotate or not each game** so you can made the most of the space available.
+
+### Level 5
+
+Given a constant rotation criteria, **consider you can change the placement orientation of each game** so you can made the most of the space available.
+
+### Level 6
+
 Consider you can **freely change placement and orientation for each game** so you can made the most of the space available.
