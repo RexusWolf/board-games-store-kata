@@ -1,7 +1,9 @@
+import { GameDoesNotFitError } from './errors/GameDoesNotFit';
 import { GameDoesNotFitHorizontallyError } from './errors/GameDoesNotFitHorizontally';
 import { GameDoesNotFitVerticallyError } from './errors/GameDoesNotFitVertically';
 import { NotEnoughSpaceInShelves } from './errors/NotEnoughSpaceInShelves';
 import { Game } from './Game';
+import { ROTATION_TYPE } from './ROTATION_TYPE';
 import { Shelf } from './Shelf';
 
 export class BoardGamesSorter {
@@ -12,13 +14,13 @@ export class BoardGamesSorter {
     shelf: Shelf;
     games: Array<Game>;
     gamesPlacement: 'VERTICAL' | 'HORIZONTAL';
-    gamesRotated90Degrees: boolean;
+    rotationType: ROTATION_TYPE;
   }) => {
-    const { numberOfShelves, shelf, games, gamesPlacement, gamesRotated90Degrees } = params;
+    const { numberOfShelves, shelf, games, gamesPlacement, rotationType } = params;
 
     const shelves: Array<Shelf> = this.initializeShelves(numberOfShelves, shelf);
 
-    games.forEach((game) => this.addGameToShelves(shelf, game, shelves, gamesPlacement, gamesRotated90Degrees));
+    games.forEach((game) => this.addGameToShelves(shelf, game, shelves, gamesPlacement, rotationType));
 
     return shelves;
   };
@@ -32,9 +34,10 @@ export class BoardGamesSorter {
     game: Game,
     shelves: Shelf[],
     gamesPlacement: string,
-    gamesRotated90Degrees: boolean
+    rotationType: ROTATION_TYPE
   ) {
-    this.checkGameFitsInShelves(shelf, game, gamesPlacement, gamesRotated90Degrees);
+    this.checkGameFitsInShelvesRotation(shelf, game, gamesPlacement, rotationType);
+    this.checkGameFitsInShelves(shelf, game, gamesPlacement);
 
     const shelfFreeIndex = this.getFreeShelf(shelves, gamesPlacement, game);
 
@@ -45,14 +48,9 @@ export class BoardGamesSorter {
     shelves[shelfFreeIndex].gamesInShelf.push(game);
   }
 
-  private checkGameFitsInShelves(shelf: Shelf, game: Game, gamesPlacement: string, gamesRotated90Degrees: boolean) {
+  private checkGameFitsInShelves(shelf: Shelf, game: Game, gamesPlacement: string) {
     if (gamesPlacement === 'VERTICAL') {
-      const gameFitsVertically = gamesRotated90Degrees ? shelf.height >= game.width : shelf.height >= game.height;
       const gameFitsHorizontally = shelf.width >= game.depth;
-
-      if (!gameFitsVertically) {
-        throw new GameDoesNotFitVerticallyError(game.name);
-      }
 
       if (!gameFitsHorizontally) {
         throw new GameDoesNotFitHorizontallyError(game.name);
@@ -61,15 +59,39 @@ export class BoardGamesSorter {
 
     if (gamesPlacement === 'HORIZONTAL') {
       const gameFitsVertically = shelf.height >= game.depth;
-      const gameFitsHorizontally = gamesRotated90Degrees ? shelf.width >= game.height : shelf.width >= game.width;
 
       if (!gameFitsVertically) {
         throw new GameDoesNotFitVerticallyError(game.name);
       }
+    }
+  }
 
-      if (!gameFitsHorizontally) {
-        throw new GameDoesNotFitHorizontallyError(game.name);
+  private checkGameFitsInShelvesRotation(
+    shelf: Shelf,
+    game: Game,
+    gamesPlacement: string,
+    rotationType: ROTATION_TYPE
+  ) {
+    const gameFitsVertically = rotationType === 'Rotated' ? shelf.height >= game.width : shelf.height >= game.height;
+
+    const gameFitsHorizontally = rotationType === 'Rotated' ? shelf.width >= game.height : shelf.width >= game.width;
+
+    if (rotationType !== 'Free_Rotation') {
+      if (gamesPlacement === 'VERTICAL') {
+        if (!gameFitsVertically) {
+          throw new GameDoesNotFitVerticallyError(game.name);
+        }
       }
+
+      if (gamesPlacement === 'HORIZONTAL') {
+        if (!gameFitsHorizontally) {
+          throw new GameDoesNotFitHorizontallyError(game.name);
+        }
+      }
+    }
+
+    if (rotationType === 'Free_Rotation' && !gameFitsHorizontally && !gameFitsVertically) {
+      throw new GameDoesNotFitError(game.name);
     }
   }
 

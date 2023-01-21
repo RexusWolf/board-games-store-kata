@@ -5,6 +5,7 @@ import { GameBuilder } from './builders/GameBuilder';
 import { GameDoesNotFitVerticallyError } from '../src/errors/GameDoesNotFitVertically';
 import { GameDoesNotFitHorizontallyError } from '../src/errors/GameDoesNotFitHorizontally';
 import { NotEnoughSpaceInShelves } from '../src/errors/NotEnoughSpaceInShelves';
+import { GameDoesNotFitError } from '../src/errors/GameDoesNotFit';
 
 describe('Board games store', () => {
   const shelf: Shelf = new Shelf({
@@ -27,7 +28,7 @@ describe('Board games store', () => {
     .withDepth(190)
     .build();
 
-  const gamesRotated90Degrees = false;
+  const rotationType = 'Not_Rotated';
 
   describe('games placement', () => {
     it('orders the games vertically ', () => {
@@ -43,7 +44,7 @@ describe('Board games store', () => {
         shelf,
         games,
         gamesPlacement,
-        gamesRotated90Degrees,
+        rotationType,
       });
 
       expect(shelvesOrdered[0].gamesInShelf).toContain(gameWith380Depth);
@@ -64,7 +65,7 @@ describe('Board games store', () => {
         shelf,
         games,
         gamesPlacement,
-        gamesRotated90Degrees,
+        rotationType,
       });
 
       expect(shelvesOrdered[0].gamesInShelf).toContain(gameWith380Depth);
@@ -75,7 +76,7 @@ describe('Board games store', () => {
 
   describe('not enough space checks', () => {
     it('throws an error if a game is too tall for the shelf when ordeded vertically', () => {
-      const games = [new GameBuilder().withHeight(400).withWidth(200).build()];
+      const games = [new GameBuilder().withDepth(200).withHeight(400).withWidth(200).build()];
       const numberOfShelves = 2;
 
       const gamesPlacement = 'VERTICAL';
@@ -83,12 +84,12 @@ describe('Board games store', () => {
       const boardGamesSorter = new BoardGamesSorter();
 
       expect(() =>
-        boardGamesSorter.orderGames({ numberOfShelves, shelf, games, gamesPlacement, gamesRotated90Degrees })
+        boardGamesSorter.orderGames({ numberOfShelves, shelf, games, gamesPlacement, rotationType })
       ).toThrowError(GameDoesNotFitVerticallyError);
     });
 
     it('throws an error if a game is too wide for the shelf when ordeded horizontally', () => {
-      const games = [new GameBuilder().withHeight(200).withWidth(400).build()];
+      const games = [new GameBuilder().withDepth(200).withHeight(200).withWidth(400).build()];
       const numberOfShelves = 2;
 
       const gamesPlacement = 'HORIZONTAL';
@@ -96,7 +97,7 @@ describe('Board games store', () => {
       const boardGamesSorter = new BoardGamesSorter();
 
       expect(() =>
-        boardGamesSorter.orderGames({ numberOfShelves, shelf, games, gamesPlacement, gamesRotated90Degrees })
+        boardGamesSorter.orderGames({ numberOfShelves, shelf, games, gamesPlacement, rotationType })
       ).toThrowError(GameDoesNotFitHorizontallyError);
     });
 
@@ -109,7 +110,7 @@ describe('Board games store', () => {
       const boardGamesSorter = new BoardGamesSorter();
 
       expect(() =>
-        boardGamesSorter.orderGames({ numberOfShelves, shelf, games, gamesPlacement, gamesRotated90Degrees })
+        boardGamesSorter.orderGames({ numberOfShelves, shelf, games, gamesPlacement, rotationType })
       ).toThrowError(NotEnoughSpaceInShelves);
     });
   });
@@ -127,12 +128,12 @@ describe('Board games store', () => {
       const numberOfShelves = 2;
 
       const gamesPlacement = 'VERTICAL';
-      const gamesRotated90Degrees = true;
+      const rotationType = 'Rotated';
 
       const boardGamesSorter = new BoardGamesSorter();
 
       expect(() =>
-        boardGamesSorter.orderGames({ numberOfShelves, shelf, games, gamesPlacement, gamesRotated90Degrees })
+        boardGamesSorter.orderGames({ numberOfShelves, shelf, games, gamesPlacement, rotationType })
       ).toThrowError(GameDoesNotFitVerticallyError);
     });
 
@@ -148,13 +149,55 @@ describe('Board games store', () => {
       const numberOfShelves = 2;
 
       const gamesPlacement = 'HORIZONTAL';
-      const gamesRotated90Degrees = true;
+      const rotationType = 'Rotated';
 
       const boardGamesSorter = new BoardGamesSorter();
 
       expect(() =>
-        boardGamesSorter.orderGames({ numberOfShelves, shelf, games, gamesPlacement, gamesRotated90Degrees })
+        boardGamesSorter.orderGames({ numberOfShelves, shelf, games, gamesPlacement, rotationType })
       ).toThrowError(GameDoesNotFitHorizontallyError);
+    });
+
+    it('throws error if game does not fit even when rotated 90 degrees and placed horizontally', () => {
+      const notFittingRotatedGame = new GameBuilder()
+        .withName('GameVeryWideWhenRotated')
+        .withHeight(400)
+        .withWidth(400)
+        .withDepth(190)
+        .build();
+
+      const games = [notFittingRotatedGame];
+      const numberOfShelves = 2;
+
+      const gamesPlacement = 'HORIZONTAL';
+      const rotationType = 'Free_Rotation';
+
+      const boardGamesSorter = new BoardGamesSorter();
+
+      expect(() =>
+        boardGamesSorter.orderGames({ numberOfShelves, shelf, games, gamesPlacement, rotationType })
+      ).toThrowError(GameDoesNotFitError);
+    });
+
+    it('throws error if game does not fit even when rotated 90 degrees and placed vertically', () => {
+      const notFittingRotatedGame = new GameBuilder()
+        .withName('GameVeryWideWhenRotated')
+        .withHeight(400)
+        .withWidth(400)
+        .withDepth(190)
+        .build();
+
+      const games = [notFittingRotatedGame];
+      const numberOfShelves = 2;
+
+      const gamesPlacement = 'VERTICAL';
+      const rotationType = 'Free_Rotation';
+
+      const boardGamesSorter = new BoardGamesSorter();
+
+      expect(() =>
+        boardGamesSorter.orderGames({ numberOfShelves, shelf, games, gamesPlacement, rotationType })
+      ).toThrowError(GameDoesNotFitError);
     });
   });
 });
