@@ -15,12 +15,16 @@ Sort all of the games following this criteria:
 - All games will be **placed vertically**; that is, with their front cover facing the right side of the shelf.
 - There will be no games covered by other games, so just one game even if another fits behind the one at the front.
 
+![Level 1 Layout](assets/lvl1.png)
+
 ### Level 2
 
 Consider you can select the games **placement** to be vertical or horizontal. If you select horizontal, sort all of the games following this criteria:
 
 - All games can be placed horizontally; that is, with their front cover looking at the top side of the shelf, and **rotated** to the front. If you were to pick up a game, you would see its cover correctly.
 - There will be no games next to other games, just on top or under other games.
+
+![Level 2 Layout](assets/lvl2.png)
 
 ### Level 3
 
@@ -36,6 +40,8 @@ Given a constant placement orientation, **consider you can rotate or not each ga
 ### Level 5
 
 Given a constant rotation criteria, **consider you can change the placement orientation of each game** so you can made the most of the space available.
+
+![Level 5 Layout](assets/lvl5.png)
 
 ### Level 6
 
