@@ -27,6 +27,8 @@ describe('Board games store', () => {
     .withDepth(190)
     .build();
 
+  const gamesRotated90Degrees = false;
+
   describe('games placement', () => {
     it('orders the games vertically ', () => {
       const games = [gameWith380Depth, gameWith400Height, gameWith400Width];
@@ -36,7 +38,13 @@ describe('Board games store', () => {
 
       const boardGamesSorter = new BoardGamesSorter();
 
-      const shelvesOrdered = boardGamesSorter.orderGames({ numberOfShelves, shelf, games, gamesPlacement });
+      const shelvesOrdered = boardGamesSorter.orderGames({
+        numberOfShelves,
+        shelf,
+        games,
+        gamesPlacement,
+        gamesRotated90Degrees,
+      });
 
       expect(shelvesOrdered[0].gamesInShelf).toContain(gameWith380Depth);
       expect(shelvesOrdered[1].gamesInShelf).toContain(gameWith400Height);
@@ -51,7 +59,13 @@ describe('Board games store', () => {
 
       const boardGamesSorter = new BoardGamesSorter();
 
-      const shelvesOrdered = boardGamesSorter.orderGames({ numberOfShelves, shelf, games, gamesPlacement });
+      const shelvesOrdered = boardGamesSorter.orderGames({
+        numberOfShelves,
+        shelf,
+        games,
+        gamesPlacement,
+        gamesRotated90Degrees,
+      });
 
       expect(shelvesOrdered[0].gamesInShelf).toContain(gameWith380Depth);
       expect(shelvesOrdered[1].gamesInShelf).toContain(gameWith400Height);
@@ -68,9 +82,9 @@ describe('Board games store', () => {
 
       const boardGamesSorter = new BoardGamesSorter();
 
-      expect(() => boardGamesSorter.orderGames({ numberOfShelves, shelf, games, gamesPlacement })).toThrowError(
-        GameDoesNotFitVerticallyError
-      );
+      expect(() =>
+        boardGamesSorter.orderGames({ numberOfShelves, shelf, games, gamesPlacement, gamesRotated90Degrees })
+      ).toThrowError(GameDoesNotFitVerticallyError);
     });
 
     it('throws an error if a game is too wide for the shelf when ordeded horizontally', () => {
@@ -81,9 +95,9 @@ describe('Board games store', () => {
 
       const boardGamesSorter = new BoardGamesSorter();
 
-      expect(() => boardGamesSorter.orderGames({ numberOfShelves, shelf, games, gamesPlacement })).toThrowError(
-        GameDoesNotFitHorizontallyError
-      );
+      expect(() =>
+        boardGamesSorter.orderGames({ numberOfShelves, shelf, games, gamesPlacement, gamesRotated90Degrees })
+      ).toThrowError(GameDoesNotFitHorizontallyError);
     });
 
     it('throws an error if there is no space for the games', () => {
@@ -94,9 +108,53 @@ describe('Board games store', () => {
 
       const boardGamesSorter = new BoardGamesSorter();
 
-      expect(() => boardGamesSorter.orderGames({ numberOfShelves, shelf, games, gamesPlacement })).toThrowError(
-        NotEnoughSpaceInShelves
-      );
+      expect(() =>
+        boardGamesSorter.orderGames({ numberOfShelves, shelf, games, gamesPlacement, gamesRotated90Degrees })
+      ).toThrowError(NotEnoughSpaceInShelves);
+    });
+  });
+
+  describe('games rotation', () => {
+    it('throws error if game does not fit when rotated 90 degrees and placed vertically', () => {
+      const notFittingRotatedGame = new GameBuilder()
+        .withName('GameVeryTallWhenRotated')
+        .withHeight(200)
+        .withWidth(400)
+        .withDepth(190)
+        .build();
+
+      const games = [notFittingRotatedGame];
+      const numberOfShelves = 2;
+
+      const gamesPlacement = 'VERTICAL';
+      const gamesRotated90Degrees = true;
+
+      const boardGamesSorter = new BoardGamesSorter();
+
+      expect(() =>
+        boardGamesSorter.orderGames({ numberOfShelves, shelf, games, gamesPlacement, gamesRotated90Degrees })
+      ).toThrowError(GameDoesNotFitVerticallyError);
+    });
+
+    it('throws error if game does not fit when rotated 90 degrees and placed horizontally', () => {
+      const notFittingRotatedGame = new GameBuilder()
+        .withName('GameVeryWideWhenRotated')
+        .withHeight(400)
+        .withWidth(200)
+        .withDepth(190)
+        .build();
+
+      const games = [notFittingRotatedGame];
+      const numberOfShelves = 2;
+
+      const gamesPlacement = 'HORIZONTAL';
+      const gamesRotated90Degrees = true;
+
+      const boardGamesSorter = new BoardGamesSorter();
+
+      expect(() =>
+        boardGamesSorter.orderGames({ numberOfShelves, shelf, games, gamesPlacement, gamesRotated90Degrees })
+      ).toThrowError(GameDoesNotFitHorizontallyError);
     });
   });
 });
