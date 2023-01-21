@@ -8,20 +8,16 @@ import { NotEnoughSpaceInShelves } from '../src/errors/NotEnoughSpaceInShelves';
 import { GameDoesNotFitError } from '../src/errors/GameDoesNotFit';
 
 describe('Board games store', () => {
-  const shelf: Shelf = new Shelf({
-    width: 380,
-    height: 380,
-    gamesInShelf: [] as Array<Game>,
-  });
+  const shelf: Shelf = Shelf.emptyWithDimensions(380, 380);
 
   const gameWith380Depth = new GameBuilder().withName('380Game').withHeight(200).withWidth(200).withDepth(380).build();
-  const gameWith400Height = new GameBuilder()
+  const gameWith190Depth = new GameBuilder()
     .withName('gameWith190Depth')
     .withHeight(200)
     .withWidth(200)
     .withDepth(190)
     .build();
-  const gameWith400Width = new GameBuilder()
+  const secondGameWith190Depth = new GameBuilder()
     .withName('gameWith190Depth')
     .withHeight(200)
     .withWidth(300)
@@ -31,8 +27,8 @@ describe('Board games store', () => {
   const rotationType = 'Not_Rotated';
 
   describe('games placement', () => {
-    it('orders the games vertically ', () => {
-      const games = [gameWith380Depth, gameWith400Height, gameWith400Width];
+    it('places the games vertically ', () => {
+      const games = [gameWith380Depth, gameWith190Depth, secondGameWith190Depth];
       const numberOfShelves = 2;
 
       const gamesPlacement = 'VERTICAL';
@@ -48,12 +44,12 @@ describe('Board games store', () => {
       });
 
       expect(shelvesOrdered[0].gamesInShelf).toContain(gameWith380Depth);
-      expect(shelvesOrdered[1].gamesInShelf).toContain(gameWith400Height);
-      expect(shelvesOrdered[1].gamesInShelf).toContain(gameWith400Height);
+      expect(shelvesOrdered[1].gamesInShelf).toContain(gameWith190Depth);
+      expect(shelvesOrdered[1].gamesInShelf).toContain(gameWith190Depth);
     });
 
-    it('orders the games horizontally ', () => {
-      const games = [gameWith380Depth, gameWith400Height, gameWith400Width];
+    it('places the games horizontally ', () => {
+      const games = [gameWith380Depth, gameWith190Depth, secondGameWith190Depth];
       const numberOfShelves = 2;
 
       const gamesPlacement = 'HORIZONTAL';
@@ -69,8 +65,43 @@ describe('Board games store', () => {
       });
 
       expect(shelvesOrdered[0].gamesInShelf).toContain(gameWith380Depth);
-      expect(shelvesOrdered[1].gamesInShelf).toContain(gameWith400Height);
-      expect(shelvesOrdered[1].gamesInShelf).toContain(gameWith400Height);
+      expect(shelvesOrdered[1].gamesInShelf).toContain(gameWith190Depth);
+      expect(shelvesOrdered[1].gamesInShelf).toContain(gameWith190Depth);
+    });
+
+    it('places the games freely ', () => {
+      const gameTooTall = new GameBuilder()
+        .withName('gameTooTall')
+        .withHeight(400)
+        .withWidth(200)
+        .withDepth(190)
+        .build();
+      const gameTooWide = new GameBuilder()
+        .withName('gameTooWide')
+        .withHeight(100)
+        .withWidth(500)
+        .withDepth(190)
+        .build();
+
+      const games = [gameTooTall, gameTooWide];
+      const numberOfShelves = 1;
+
+      const gamesPlacement = 'FREE';
+
+      const boardGamesSorter = new BoardGamesSorter();
+
+      const shelvesOrdered = boardGamesSorter.orderGames({
+        numberOfShelves,
+        shelf,
+        games,
+        gamesPlacement,
+        rotationType,
+      });
+
+      expect(shelvesOrdered[0].gamesInShelf).toContain(gameTooTall);
+      expect(shelvesOrdered[0].gamesInShelf).toContain(gameTooTall);
+      expect(shelvesOrdered[0].gamesInShelfHorizontally).toContain(gameTooTall);
+      expect(shelvesOrdered[0].gamesInShelfVertically).toContain(gameTooWide);
     });
   });
 
@@ -102,7 +133,7 @@ describe('Board games store', () => {
     });
 
     it('throws an error if there is no space for the games', () => {
-      const games = [gameWith380Depth, gameWith380Depth, gameWith400Height, gameWith400Width];
+      const games = [gameWith380Depth, gameWith380Depth, gameWith190Depth, secondGameWith190Depth];
       const numberOfShelves = 2;
 
       const gamesPlacement = 'HORIZONTAL';
