@@ -37,18 +37,26 @@ Consider you can **rotate** the games so their front cover is oriented to one of
 
 ### Level 4
 
-Given a constant placement orientation, **consider you can rotate or not each game** so you can made the most of the space available.
+Given a constant placement orientation, **consider you can rotate or not each game**.
 
 ![Level 4 Layout](assets/lvl4.png)
 
 ### Level 5
 
-Given a constant rotation criteria, **consider you can change the placement orientation of each game** so you can made the most of the space available.
+Given a constant rotation criteria, **consider you can change the placement orientation of each game**.
 
 ![Level 5 Layout](assets/lvl5.png)
 
 ### Level 6
 
-Consider you can **freely change placement and orientation for each game** so you can made the most of the space available.
+Consider you can **freely change placement and orientation for each game**.
 
 ![Level 6 Layout](assets/lvl6.png)
+
+### Level 7
+
+There is be the possibility that you can complete all the previous levels with a non-efficient board games sorter, that is because there could be free space in some of the shelves after sorting all of the games.
+
+Consider you can still **freely change placement and orientation for each game** and make the necessary changes to make the most of the space available. In other words, occupy the less amount of shelves, and fill the shelves as much as possible with games.
+
+![Level 7 Layout](assets/lvl7.png)
